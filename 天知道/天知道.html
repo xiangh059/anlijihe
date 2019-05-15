@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>天知道</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/iconfont.css">
+    <link rel="stylesheet" href="css/main2.css">
+    <script type="text/javascript" src="js/vue2.0.js"></script>
+    <script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="js/art-template.js"></script>
+    <!-- 
+        http://wthrcdn.etouch.cn/weather_mini?city=
+     -->
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="search_form">
+            <div class="logo"><img src="img/logo.png" alt="logo"></div>
+            <div class="form_group">
+                <input type="text" class="input_txt" placeholder="请输入查询的天气" v-model.trim="city" @keyup.enter="searchWeather(city)">
+                <input type="button" value="搜 索" class="input_sub" @click="searchWeather(city)">
+            </div>
+            <div class="hotkey"><a href="javascript:;" @click="city='北京';searchWeather(city)">北京</a><a href="javascript:;" @click="city='上海';searchWeather(city)">上海</a>
+                <a href="javascript:;" @click="city='广州';searchWeather(city)">广州</a><a href="javascript:;" @click="city='深圳';searchWeather(city)">深圳</a></div>
+        </div>
+        <ul class="weather_list">
+            <li v-for="item in weatherList">
+                <div class="info_type">
+                    <span class="iconfont" v-if="item.type=='小雨'">&#xe932;</span>
+                    <span class="iconfont" v-else-if="item.type=='中雨'">&#xe931;</span>
+                    <span class="iconfont" v-else-if="item.type=='雷阵雨'">&#xeb77;</span>
+                    <span class="iconfont" v-else-if="item.type=='雷阵雨'">&#xeb77;</span>
+                    <span class="iconfont" v-else-if="item.type=='阵雨'">&#xeb77;</span>
+                    <span class="iconfont" v-else>&#xe933;</span>
+                </div>
+                <div class="info_temp">高 <b>{{item.high.split(" ")[1]}}</b><br>低 {{item.low.split(" ")[1]}}</div>
+                <div class="info_date"><b>{{item.city}}</b><span>{{ item.date }}</span></div>
+            </li>
+        </ul>
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '.wrap',
+            data: {
+                city: '',
+                weatherList: []
+            },
+            methods: {
+                searchWeather(str) {
+                    $.ajax({
+                        url: 'http://wthrcdn.etouch.cn/weather_mini?city=' + str,
+                        dataType: 'json',
+                        success: backData => {
+                            //console.log(backData);
+                            this.weatherList = backData.data.forecast;
+                            this.weatherList.map(function (item) {
+                                item.city = backData.data.city;
+                            })
+                        }
+                    })
+                }
+            },
+            mounted() {
+                this.searchWeather('深圳');
+            },
+        })
+    </script>
+
+</body>
+
+</html>
